@@ -27,25 +27,48 @@ function hideElements(selectors) {
             document.querySelectorAll(sel).forEach(el => {
                 el.style.setProperty('display', 'none', 'important');
             });
-        } catch (_) {
-            // ignore invalid selectors at runtime (e.g. :has() on older engines)
-        }
+        } catch (_) {}
+    });
+}
+
+function showElements(selectors) {
+    selectors.forEach(sel => {
+        try {
+            document.querySelectorAll(sel).forEach(el => {
+                el.style.removeProperty('display');
+            });
+        } catch (_) {}
     });
 }
 
 const selectors = getSelectors();
 if (selectors.length === 0) return;
 
-hideElements(selectors);
+// Run based on stored state (default: enabled)
+browser.storage.local.get('enabled').then(result => {
+    if (result.enabled !== false) hideElements(selectors);
+});
 
-// Re-run on SPA navigation (YouTube / Instagram both use pushState)
+// React to toggle changes without reloading the page
+browser.storage.onChanged.addListener((changes) => {
+    if (changes.enabled) {
+        changes.enabled.newValue ? hideElements(selectors) : showElements(selectors);
+    }
+});
+
+// Watch for dynamic content
 let lastUrl = location.href;
 const observer = new MutationObserver(() => {
     if (location.href !== lastUrl) {
         lastUrl = location.href;
-        hideElements(selectors);
+        browser.storage.local.get('enabled').then(result => {
+            if (result.enabled !== false) hideElements(selectors);
+        });
+    } else {
+        browser.storage.local.get('enabled').then(result => {
+            if (result.enabled !== false) hideElements(selectors);
+        });
     }
-    hideElements(selectors);
 });
 
 observer.observe(document.documentElement, { childList: true, subtree: true });
