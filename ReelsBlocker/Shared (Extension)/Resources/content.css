@@ -1,0 +1,21 @@
+/* YouTube: Shorts shelf on home feed */
+ytd-reel-shelf-renderer,
+ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+#shortsLockupViewModelHostHomeFeature,
+ytd-guide-entry-renderer:has(a[title="Shorts"]),
+ytd-mini-guide-entry-renderer:has(a[title="Shorts"]) {
+    display: none !important;
+}
+
+/* YouTube: Shorts links in suggestions / search results */
+a[href^="/shorts"],
+ytd-reel-item-renderer,
+ytd-shorts {
+    display: none !important;
+}
+
+/* Instagram: Reels nav tab */
+a[href="/reels/"],
+[aria-label="Reels"] {
+    display: none !important;
+}

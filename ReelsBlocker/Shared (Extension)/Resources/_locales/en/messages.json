@@ -1,0 +1,10 @@
+{
+    "extension_name": {
+        "message": "ReelsBlocker",
+        "description": "The display name for the extension."
+    },
+    "extension_description": {
+        "message": "Hides Instagram Reels and YouTube Shorts from your feeds.",
+        "description": "Description of what the extension does."
+    }
+}
