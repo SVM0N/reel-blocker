@@ -3,27 +3,25 @@
 }
 
 body {
-    width: 200px;
-    padding: 14px 16px;
+    width: 210px;
+    padding: 10px 14px;
     font-family: system-ui;
     margin: 0;
 }
 
-#row {
+.row {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 6px 0;
 }
 
-#label {
-    font-size: 14px;
-    font-weight: 600;
+.row + .row {
+    border-top: 1px solid rgba(128,128,128,0.2);
 }
 
-#status {
-    margin: 6px 0 0;
-    font-size: 11px;
-    opacity: 0.5;
+.label {
+    font-size: 13px;
 }
 
 .switch {
@@ -31,6 +29,7 @@ body {
     display: inline-block;
     width: 36px;
     height: 20px;
+    flex-shrink: 0;
 }
 
 .switch input { display: none; }

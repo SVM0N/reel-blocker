@@ -9,67 +9,65 @@ const SELECTORS = {
         'ytd-reel-item-renderer',
         'ytd-shorts',
     ],
-    instagram: [
+    instagram_reels: [
         'a[href="/reels/"]',
         '[aria-label="Reels"]',
+    ],
+    instagram_explore: [
+        'a[href="/explore/"]',
+        '[aria-label="Explore"]',
     ],
 };
 
 const HOST = location.hostname;
-const selectors =
-    HOST.includes('youtube.com') ? SELECTORS.youtube :
-    HOST.includes('instagram.com') ? SELECTORS.instagram : [];
+const isYouTube = HOST.includes('youtube.com');
+const isInstagram = HOST.includes('instagram.com');
 
-if (!selectors.length) throw new Error('no-op');
+if (!isYouTube && !isInstagram) throw new Error('no-op');
 
-let enabled = true; // optimistic default — updated from storage below
+let state = { enabled: true, blockExplore: false };
 
-function hideElements() {
+function setVisible(selectors, visible) {
     selectors.forEach(sel => {
         try {
             document.querySelectorAll(sel).forEach(el => {
-                el.style.setProperty('display', 'none', 'important');
-            });
-        } catch (_) {}
-    });
-}
-
-function showElements() {
-    selectors.forEach(sel => {
-        try {
-            document.querySelectorAll(sel).forEach(el => {
-                el.style.removeProperty('display');
+                visible
+                    ? el.style.removeProperty('display')
+                    : el.style.setProperty('display', 'none', 'important');
             });
         } catch (_) {}
     });
 }
 
 function applyState() {
-    enabled ? hideElements() : showElements();
+    if (isYouTube) {
+        setVisible(SELECTORS.youtube, !state.enabled);
+    }
+    if (isInstagram) {
+        setVisible(SELECTORS.instagram_reels, !state.enabled);
+        setVisible(SELECTORS.instagram_explore, !state.blockExplore);
+    }
 }
 
-// Load stored state then apply
-browser.storage.local.get('enabled').then(result => {
-    enabled = result.enabled !== false;
+browser.storage.local.get(['enabled', 'blockExplore']).then(result => {
+    state.enabled = result.enabled !== false;
+    state.blockExplore = result.blockExplore === true;
     applyState();
 });
 
-// Respond to popup toggle instantly
 browser.storage.onChanged.addListener((changes) => {
-    if ('enabled' in changes) {
-        enabled = changes.enabled.newValue !== false;
-        applyState();
-    }
+    if ('enabled' in changes) state.enabled = changes.enabled.newValue !== false;
+    if ('blockExplore' in changes) state.blockExplore = changes.blockExplore.newValue === true;
+    applyState();
 });
 
-// Keep hiding as SPA loads new content
 let lastUrl = location.href;
 const observer = new MutationObserver(() => {
     if (location.href !== lastUrl) {
         lastUrl = location.href;
         applyState();
-    } else if (enabled) {
-        hideElements();
+    } else {
+        applyState();
     }
 });
 

@@ -5,14 +5,20 @@
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <div id="row">
-        <span id="label">Reels Blocker</span>
+    <div class="row">
+        <span class="label">Block Reels &amp; Shorts</span>
         <label class="switch">
-            <input type="checkbox" id="toggle">
+            <input type="checkbox" id="toggle-reels">
             <span class="slider"></span>
         </label>
     </div>
-    <p id="status">Active on Instagram &amp; YouTube</p>
+    <div class="row">
+        <span class="label">Block Explore</span>
+        <label class="switch">
+            <input type="checkbox" id="toggle-explore">
+            <span class="slider"></span>
+        </label>
+    </div>
     <script src="popup.js"></script>
 </body>
 </html>

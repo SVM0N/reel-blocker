@@ -1,20 +1,15 @@
-const toggle = document.getElementById('toggle');
-const status = document.getElementById('status');
+const reelsToggle = document.getElementById('toggle-reels');
+const exploreToggle = document.getElementById('toggle-explore');
 
-browser.storage.local.get('enabled').then(result => {
-    const enabled = result.enabled !== false; // default on
-    toggle.checked = enabled;
-    updateStatus(enabled);
+browser.storage.local.get(['enabled', 'blockExplore']).then(result => {
+    reelsToggle.checked = result.enabled !== false;
+    exploreToggle.checked = result.blockExplore === true;
 });
 
-toggle.addEventListener('change', () => {
-    const enabled = toggle.checked;
-    browser.storage.local.set({ enabled });
-    updateStatus(enabled);
+reelsToggle.addEventListener('change', () => {
+    browser.storage.local.set({ enabled: reelsToggle.checked });
 });
 
-function updateStatus(enabled) {
-    status.textContent = enabled
-        ? 'Active on Instagram & YouTube'
-        : 'Paused';
-}
+exploreToggle.addEventListener('change', () => {
+    browser.storage.local.set({ blockExplore: exploreToggle.checked });
+});
